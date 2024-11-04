@@ -1,0 +1,10 @@
+{
+    "languageName": "English 🇺🇸",
+    "welcome": "Select deck for study",
+    "add_deck": "Upload your deck file here (*.apkg)\nYou can find decks here: https://ankiweb.net/shared/decks",
+    "remove_deck": "Select your deck to remove",
+    "sure": "Are you sure?",
+    "fieldsSetupQuestion": "Select question field",
+    "fieldsSetupAnswer": "Select answer field",
+    "languageSetup": "Select language/Выберите язык"
+}

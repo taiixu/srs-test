@@ -1,0 +1,7 @@
+{
+    "users_ids": [],
+    "language_path": "./lang",
+    "decks_path": "./decks",
+    "temp_path": "./temp",
+    "database_path": "./database/local-db.json"
+}
