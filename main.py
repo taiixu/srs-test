@@ -28,4 +28,8 @@ handler = MessageHandler(database, langs, bot)
 def start(message):
     handler.handle(message)
 
+@bot.message_handler(content_types=['text'])
+def text_handler(message):
+    handler.handle(message)
+
 bot.infinity_polling()

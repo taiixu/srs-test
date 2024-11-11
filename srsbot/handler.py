@@ -13,4 +13,9 @@ class MessageHandler:
             user = User(message.chat.id, self.bot, self.languages)
             user.setup()
             self.user_base.add_user(user)
+            self.user_base.update_db()
+            return
+        
+        user = self.user_base.get_user_by_id(message.chat.id)
+        user.handle_message(message)
         self.user_base.update_db()

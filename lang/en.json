@@ -2,5 +2,8 @@
     "languageName": "English 🇺🇸",
     "languageAbbr": "en",
     "languageSetup": "Choose language/Выберите язык",
-    "welcome": "Select a deck for studying, or upload a new deck by clicking \"Upload a deck\""
+    "welcome": "Select a deck for studying, or upload a new deck by clicking \"Upload a deck\"",
+    "keyWrong": "You wrote something, but the bot did not understand you. Please use the buttons below",
+    "buttonAddDeck": "➕ Add deck",
+    "buttonSettings": "⚙️ Settings"
 }
