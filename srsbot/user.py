@@ -29,7 +29,6 @@ class UserBase:
                     user.lang_name = l.name
             user.decks = u_info['decks'] # TODO: Make deck object
             
-
     def is_user_exist(self, user_id):
         for usr in self.__user_list:
             if usr.user_id == user_id:
@@ -61,5 +60,3 @@ class User:
         if self.stage == "setup:0":
             self.__bot.send_message(self.user_id, self.lang.print("welcome"), reply_markup=self.__keyboard_main_menu())
     
-    def upload_from_db(self, user_json):
-        pass
