@@ -50,5 +50,8 @@ class DataBase:
     def get_decks(self, uid):
         return self.__database[uid]['decks']
     
+    def get_db(self):
+        return self.__database
+
     def inDatabase(self, uid):
         return uid in self.__database

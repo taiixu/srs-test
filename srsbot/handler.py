@@ -5,7 +5,7 @@ class MessageHandler:
     def __init__(self, db: DataBase, languages: list, bot):
         self.database = db
         self.languages = languages
-        self.user_base = UserBase(self.database)
+        self.user_base = UserBase(self.database, self.languages, bot)
         self.bot = bot
     
     def handle(self, message):
