@@ -1,12 +1,11 @@
-from .user import User
-from .db import DataBase
-
-users = {}
+from .user import User, UserBase
 
 class MessageHandler:
     def __init__(self, db):
         self.database = db
+        self.languages = []
+        self.user_base = UserBase(self.database)
     
     def handle(self, message):
-        if message.chat.id not in users and not self.database.inDatabase(message.chat.id):
-            pass
+        if not self.user_base.is_user_exist(message.chat.id):
+            user = User()

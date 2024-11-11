@@ -1,0 +1,10 @@
+setup:0 - language choose
+main - main menu
+deck:<name> - deck studying
+deck_add - deck addition
+deck_add:fields_edit - edit deck fields 
+settings:main - main settings
+settings:decks_edit - edit decks menu
+settings:deck_remove:<name> - remove deck
+settings:deck_fields_edit:<name> - edit deck fields
+settings:timezone - timezone edit

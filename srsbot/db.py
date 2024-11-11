@@ -21,6 +21,16 @@ class DataBase:
         })
         self.__update()
     
+    def update_user(self, uid, lang, decks, stage):
+        self.__database.update({
+            uid: {
+                "lang": lang,
+                "decks": decks,
+                "stage": stage
+            }
+        })
+        self.__update()
+
     def get_stage(self, uid):
         return self.__database[uid]['stage']
 
