@@ -1,5 +1,4 @@
 import json
-from user import User
 
 class DataBase:
     def __init__(self, path):
