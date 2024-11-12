@@ -49,9 +49,15 @@ def save_to_csv(f):
             for i in values(tempfile):
                 f.write(','.join(i))
                 f.write('\n')
+            tempfile.close()
 
     except Exception as e:
         print(e)
-    
+
+def convert(deck_name, out):
+    file(deck_name)
+    save_to_csv(out)
+    clear_temp()
+
 def clear_temp():
     os.remove('tempfile')
