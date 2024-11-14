@@ -8,15 +8,26 @@ class SimpleDeck:
         self.deck_path = path
         self.__csv_file = open(path, 'r', encoding='utf-8').read()
         self.selected_fields = ''
-        self.headers = self.__csv_file.split('\n')[1].split(',')
-        self.fields = self.__csv_file.split('\n')[2:-1] if self.__csv_file.split('\n')[-1] == '' else self.__csv_file.split('\n')[2:]
+        self.headers = self.__csv_file.split('\n')[0].split(',')
+        self.fields = self.__csv_file.split('\n')[1:-1] if self.__csv_file.split('\n')[-1] == '' else self.__csv_file.split('\n')[1:]
         if not self.check_fields():
             self.add_deck_fields()
 
     def add_deck_fields(self):
-        self.headers += ',___time,___status,___srs_time,___card_time'
+        self.headers += ['___time', '___status', '___srs_time', '___card_time']
         for c in range(len(self.fields)):
             self.fields[c] += ',,,,'
+
+    def get_fields(self):
+        ret = {}
+        for key, index in zip(self.headers[:-4], range(len(self.headers[:-4]))):
+            column = []
+            for item in self.fields:
+                # print(key)
+                column.append(item.split(',')[index])
+            ret.update({key: column})
+            column = []
+        return ret
 
     def check_fields(self):
         return '___time' in self.headers and '___status' in self.headers and '___srs_time' in self.headers and '___card_time' in self.headers
@@ -65,10 +76,10 @@ class Deck:
         self.___srs_time = self.get_column('___srs_time')
         self.___card_time = self.get_column('___card_time')
 
-        self.new, self.study, self.repeat = self.get_studying_cards()
+        self.new, self.study_now, self.repeat = self.get_studying_cards()
         self.count = self.get_studying_count()
 
-        self.queue = self.list_sum(self.new, self.study, self.repeat)
+        self.queue = self.list_sum(self.new, self.study_now, self.repeat)
         self.current_card = 0
 
     def move_to_center(self):
@@ -104,8 +115,8 @@ class Deck:
                 break
         return ret
             
-    def answer(self, answer):
-        if self.answer[self.current_card] == answer:
+    def answer(self, ans):
+        if self.answers[self.current_card] == ans:
             self.___status[self.current_card] = '3'
             self.___srs_time[self.current_card] = str(int(2.5 * int(self.___card_time[self.current_card]) + 1))
             self.___card_time[self.current_card] = '0'
@@ -118,7 +129,7 @@ class Deck:
             return False
         
     def update(self):
-        self.new, self.study, self.repeat = self.get_studying_cards()
+        self.new, self.study_now, self.repeat = self.get_studying_cards()
         self.count = self.get_studying_count()
 
     def study(self):
@@ -127,7 +138,7 @@ class Deck:
         self.current_card = self.queue[0]
         question = self.questions[self.current_card]
         answer = self.answers[self.current_card]
-        rand_answers = self.get_random_answers(self.answers, answer)
+        rand_answers = self.get_random_answers(3, answer)
         if rand_answers == None:
             raise Exception("get_random_answers count >= len(answers)")
         return question, answer, rand_answers, self.count
@@ -140,13 +151,13 @@ class Deck:
         repeat = []
 
         for i in range(len(self.questions)):
-            if self.___time[i] is not '' and self.___status[i] is not '' and self.___srs_time[i] is not '' and self.___card_time[i] is not '':
+            if self.___time[i] != '' and self.___status[i] != '' and self.___srs_time[i] != '' and self.___card_time[i] != '':
                 if self.___status[i] == '1':
                     new.append(i)
                 elif self.___status[i] == '2':
                     studying.append(i)
                 elif self.___status[i] == '3':
-                    if int(self.___time[i]) is not self.day_now:
+                    if int(self.___time[i]) != self.day_now:
                         self.___time[i] = str(self.day_now)
                         self.___card_time[i] = str(int(self.___card_time[i]) + 1)
                     
@@ -165,7 +176,7 @@ class Deck:
         return int(time.time()) // (24 * 60 * 60)
 
     def get_studying_count(self):
-        return len(self.new), len(self.study), len(self.repeat)
+        return len(self.new), len(self.study_now), len(self.repeat)
 
     def list_sum(self, l1, l2, l3):
         ret = []
@@ -187,7 +198,8 @@ class Deck:
         return ret
 
     def add_deck_fields(self):
-        self.headers += ',___time,___status,___srs_time,___card_time'
+        # self.headers += ',___time,___status,___srs_time,___card_time'
+        self.headers += ['___time', '___status', '___srs_time', '___card_time']
         for c in range(len(self.fields)):
             self.fields[c] += ',,,,'
 
@@ -198,6 +210,6 @@ class Deck:
         f = open(self.deck_path, 'w', encoding='utf-8')
         f.write(f'{self.selected_question};{self.selected_answer}\n')
         f.write(','.join(self.headers) + '\n')
-        for c in range(self.fields):
-            f.write(f"{c},{self.___time},{self.___status},{self.___srs_time},{self.___card_time}\n")
+        for i in range(len(self.fields)):
+            f.write(f"{','.join(self.fields[i].split(',')[:-4])},{self.___time[i]},{self.___status[i]},{self.___srs_time[i]},{self.___card_time[i]}\n")
         f.close()

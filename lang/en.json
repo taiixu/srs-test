@@ -5,5 +5,9 @@
     "welcome": "Select a deck for studying, or upload a new deck by clicking \"Upload a deck\"",
     "keyWrong": "You wrote something, but the bot did not understand you. Please use the buttons below",
     "buttonAddDeck": "➕ Add deck",
-    "buttonSettings": "⚙️ Settings"
+    "buttonSettings": "⚙️ Settings",
+    "addDeck": "Upload the deck in *.apkg format (download decks here: https://ankiweb.net/shared/decks)",
+    "buttonBack": "⬅️ Back",
+    "mainMenu": "Choose a deck to study",
+    "uploadError": "There was an error uploading the deck"
 }
