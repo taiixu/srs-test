@@ -262,6 +262,25 @@ class Deck:
     def check_fields(self):
         return '___time' in self.headers and '___status' in self.headers and '___srs_time' in self.headers and '___card_time' in self.headers
     
+    def add_selected_fields(self, question, answer):
+        self.selected_question = question
+        self.selected_answer = answer
+    
+    def get_fields(self):
+        ret = {}
+        for key, index in zip(self.headers[:-4], range(len(self.headers[:-4]))):
+            column = []
+            for item in self.fields:
+                column.append(item.split(',')[index])
+            ret.update({key: column})
+            column = []
+        return ret
+
+    def update_deck(self):
+        self.new, self.study_now, self.repeat = self.get_studying_cards()
+        self.queue = self.list_sum(self.new, self.study_now, self.repeat)
+        self.count = self.get_studying_count()
+
     def save(self):
         f = open(self.deck_path, 'w', encoding='utf-8')
         f.write(f'{self.selected_question};{self.selected_answer}\n')

@@ -70,6 +70,8 @@ class User:
 
         self.studying_deck = None
         self.current_question = None
+        
+        self.current_setting_deck_index = None
     
     def __sentence_short(self, text, length=40):
         if len(text) < length:
@@ -109,6 +111,44 @@ class User:
             markup.add(KeyboardButton(c))
         return markup
     
+    def __keyboard_settings_setup_lang(self):
+        markup = ReplyKeyboardMarkup(row_width=1)
+        [markup.add(KeyboardButton(c.name)) for c in self.languages]
+        back_button = KeyboardButton(self.lang.print("buttonBack"))
+        markup.add(back_button)
+        return markup
+    
+    def __keyboard_main_settins(self):
+        markup = ReplyKeyboardMarkup(row_width=1)
+        decks_button = KeyboardButton(self.lang.print("buttonDecksSettings"))
+        lang_button = KeyboardButton(self.lang.print("buttonLanguageSettings"))
+        back_button = KeyboardButton(self.lang.print("buttonBack"))
+        markup.add(decks_button, lang_button, back_button)
+        return markup
+    
+    def __keyboard_settings_decks(self):
+        markup = ReplyKeyboardMarkup(row_width=1)
+        for c in self.decks:
+            markup.add(KeyboardButton(c.deck_name_without_id))
+        back_button = KeyboardButton(self.lang.print("buttonBack"))
+        markup.add(back_button)
+        return markup
+    
+    def __keyboard_settings_deck_menu(self):
+        markup = ReplyKeyboardMarkup(row_width=1)
+        change_fields_button = KeyboardButton(self.lang.print("buttonChangeFields"))
+        remove_deck_button = KeyboardButton(self.lang.print("buttonRemoveDeck"))
+        back_button = KeyboardButton(self.lang.print("buttonBack"))
+        markup.add(change_fields_button, remove_deck_button, back_button)
+        return markup
+    
+    def __keyboard_yes_or_no(self):
+        markup = ReplyKeyboardMarkup(row_width=1)
+        yes = KeyboardButton(self.lang.print("buttonYes"))
+        no = KeyboardButton(self.lang.print("buttonNo"))
+        markup.add(yes, no)
+        return markup
+
     def send_question(self, status=None):
         prefix = ''
         if status == False:
@@ -198,6 +238,7 @@ class User:
                 self.send_w_keyboard("deckStudied")
                 return
             self.stage = 'deck_study'
+            self.studying_deck.update_deck()
             self.send_question()
         elif self.stage == "deck_study" and message.text in self.current_question[2]:
             isCorrect = self.studying_deck.answer(message.text)
@@ -205,3 +246,64 @@ class User:
         elif self.stage == "deck_study" and message.text == self.lang.print("buttonBack"):
             self.stage = "main"
             self.send("mainMenu", self.__keyboard_main_menu())
+        elif self.stage == "main" and message.text == self.lang.print("buttonSettings"):
+            self.stage = "settings:main"
+            self.send("settings", self.__keyboard_main_settins())
+        elif self.stage == "settings:main" and message.text == self.lang.print("buttonBack"):
+            self.stage = "main"
+            self.send("mainMenu", self.__keyboard_main_menu())
+        elif self.stage == "settings:main" and message.text == self.lang.print("buttonLanguageSettings"):
+            self.stage = "settings:language"
+            self.send("languageSetup", self.__keyboard_settings_setup_lang())
+        elif self.stage == "settings:language" and message.text in [c.name for c in self.languages]:
+            self.lang = self.languages[[c.name for c in self.languages].index(message.text)]
+            self.stage = "settings:main"
+            self.send("langChoose", self.__keyboard_main_settins(), send_after=self.lang.name)
+        elif self.stage == "settings:language" and message.text == self.lang.print("buttonBack"):
+            self.stage = "settings:main"
+            self.send("settings", self.__keyboard_main_settins())
+        elif self.stage == "settings:main" and message.text == self.lang.print("buttonDecksSettings"):
+            self.stage = "settings:decks_edit"
+            self.send("decksSettings", self.__keyboard_settings_decks())
+        elif self.stage == "settings:decks_edit" and message.text == self.lang.print("buttonBack"):
+            self.stage = "settings:main"
+            self.send("settings", self.__keyboard_main_settins())
+        elif self.stage == "settings:decks_edit" and message.text in [c.deck_name_without_id for c in self.decks]:
+            self.current_setting_deck_index = [c.deck_name_without_id for c in self.decks].index(message.text)
+            self.stage = "settings:decks_edit:menu"
+            self.send("choosedDeckSettings", self.__keyboard_settings_deck_menu(), send_after=self.decks[self.current_setting_deck_index].deck_name_without_id)
+        elif self.stage == "settings:decks_edit:menu" and message.text == self.lang.print("buttonBack"):
+            self.stage = "settings:decks_edit"
+            self.send("decksSettings", self.__keyboard_settings_decks())
+        elif self.stage == "settings:decks_edit:menu" and message.text == self.lang.print("buttonChangeFields"):
+            self.fields = self.decks[self.current_setting_deck_index].get_fields()
+            self.stage = "settings:decks_edit:fields:q"
+            self.send("deckUploadQuestionChoose", self.__keyboard_deck_fields(), send_after=f'\n{self.__text_deck_fields()}')
+        elif self.stage == "settings:decks_edit:fields:q" and message.text in self.fields:
+            self.question = message.text
+            self.stage = "settings:decks_edit:fields:a"
+            self.send("deckUploadAnswerChoose", self.__keyboard_deck_fields(), send_after=f'\n{self.__text_deck_fields()}')
+        elif self.stage == "settings:decks_edit:fields:a" and message.text in self.fields:
+            self.answer = message.text
+            self.decks[self.current_setting_deck_index].add_selected_fields(self.question, self.answer)
+            self.decks[self.current_setting_deck_index].save()
+            d_path = self.decks[self.current_setting_deck_index].deck_path
+            del self.decks[self.current_setting_deck_index]
+            self.decks.append(Deck(d_path))
+            self.stage = "settings:decks_edit"
+            self.send("fieldsChooseSuccess", self.__keyboard_settings_decks())
+        elif self.stage == "settings:decks_edit:menu" and message.text == self.lang.print("buttonRemoveDeck"):
+            self.stage = "settings:decks_edit:remove"
+            self.send("removeDeckSure", self.__keyboard_yes_or_no())
+        elif self.stage == "settings:decks_edit:remove" and message.text == self.lang.print("buttonNo"):
+            self.stage = "settings:decks_edit:menu"
+            self.send("choosedDeckSettings", self.__keyboard_settings_deck_menu(), send_after=self.decks[self.current_setting_deck_index].deck_name_without_id)
+        elif self.stage == "settings:decks_edit:remove" and message.text == self.lang.print("buttonYes"):
+            os.remove(self.decks[self.current_setting_deck_index].deck_path)
+            del self.decks[self.current_setting_deck_index]
+            self.stage = "settings:decks_edit"
+            self.send("removeSuccess", self.__keyboard_settings_decks())
+        else:
+            self.send_w_keyboard("keyWrong")
+        
+

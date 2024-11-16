@@ -16,5 +16,18 @@
     "correctAnswer": "⭕ Correct",
     "incorrectAnswer": "❌ Wrong, correct answer: ",
     "endStudy": "That's it\nDon't forget to repeat the deck tomorrow",
-    "deckStudied": "Everything's been studied for today, come back tomorrow."
+    "deckStudied": "Everything's been studied for today, come back tomorrow.",
+    "buttonDecksSettings": "📖 Decks settings",
+    "buttonLanguageSettings": "🎌 Language settings",
+    "settings": "You're in the settings",
+    "langChoose": "Now your language is ",
+    "decksSettings": "Select the deck you want to customize",
+    "buttonChangeFields": "🖊️ Change the fields of the deck",
+    "buttonRemoveDeck": "❌ Remove the deck",
+    "choosedDeckSettings": "You're in the deck settings under the name: ",
+    "fieldsChooseSuccess": "The deck settings have been successfully updated",
+    "removeDeckSure": "Are you sure you want to remove the deck?",
+    "buttonYes": "✅ Yes",
+    "buttonNo": "🟥 No",
+    "removeSuccess": "The deck has been successfully removed"
 }

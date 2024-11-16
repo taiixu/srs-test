@@ -5,7 +5,9 @@ deck_add - deck addition
 deck_add:fields_edit:q - edit deck question field
 deck_add:fields_edit:a - edit deck answer field
 settings:main - main settings
+settings:language - language settings
 settings:decks_edit - edit decks menu
-settings:deck_remove:<name> - remove deck
-settings:deck_fields_edit:<name> - edit deck fields
-settings:timezone - timezone edit
+settings:decks_edit:menu - menu of deck
+settings:decks_edit:remove - remove deck
+settings:decks_edit:fields:q - edit question deck field
+settings:decks_edit:fields:a - edit answer deck field
