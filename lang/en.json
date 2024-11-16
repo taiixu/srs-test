@@ -9,5 +9,12 @@
     "addDeck": "Upload the deck in *.apkg format (download decks here: https://ankiweb.net/shared/decks)",
     "buttonBack": "⬅️ Back",
     "mainMenu": "Choose a deck to study",
-    "uploadError": "There was an error uploading the deck"
+    "uploadError": "There was an error uploading the deck",
+    "deckUploadQuestionChoose": "Select which field will be used as the question\nThe following shows what fields the deck contains and what is contained in those fields\n\n",
+    "deckUploadAnswerChoose": "Select which field will be used as the answer\n\n",
+    "deckAddSuccess": "The deck has been successfully added",
+    "correctAnswer": "⭕ Correct",
+    "incorrectAnswer": "❌ Wrong, correct answer: ",
+    "endStudy": "That's it\nDon't forget to repeat the deck tomorrow",
+    "deckStudied": "Everything's been studied for today, come back tomorrow."
 }
