@@ -10,8 +10,10 @@ class SimpleDeck:
         self.__csv_file = open(path, 'r', encoding='utf-8').read()
         self.selected_fields = ''
         self.new_count = 15
-        self.headers = self.__csv_file.split('\n')[0].split(',')
-        self.fields = self.__csv_file.split('\n')[1:-1] if self.__csv_file.split('\n')[-1] == '' else self.__csv_file.split('\n')[1:]
+        self.headers = self.__csv_file.split('\n')[0].split('\t')
+        self.__fields = self.__csv_file.split('\n')[1:-1] if self.__csv_file.split('\n')[-1] == '' else self.__csv_file.split('\n')[1:]
+        self.fields = []
+        self.filter_deck()
         if not self.check_fields():
             self.add_deck_fields()
         
@@ -22,14 +24,14 @@ class SimpleDeck:
     def add_deck_fields(self):
         self.headers += ['___time', '___status', '___srs_time', '___card_time']
         for c in range(len(self.fields)):
-            self.fields[c] += ',,,,'
+            self.fields[c] += '\t\t\t\t'
 
     def get_fields(self):
         ret = {}
         for key, index in zip(self.headers[:-4], range(len(self.headers[:-4]))):
             column = []
             for item in self.fields:
-                column.append(item.split(',')[index])
+                column.append(item.split('\t')[index])
             ret.update({key: column})
             column = []
         return ret
@@ -47,9 +49,14 @@ class SimpleDeck:
         index = self.headers.index(field_name)
         ret = []
         for c in self.fields:
-            ret.append(c.split(',')[index])
+            ret.append(c.split('\t')[index])
         return ret
     
+    def filter_deck(self):
+        for i in range(len(self.__fields)):
+            if len(self.__fields[i].split('\t')) == len(self.headers):
+                self.fields.append(self.__fields[i])
+
     def add_time(self):
         current_day = self.get_current_day()
         self.___time = self.get_column('___time')
@@ -65,10 +72,10 @@ class SimpleDeck:
     def save(self):
         f = open(self.deck_path, 'w', encoding='utf-8')
         f.write(self.selected_fields + '\n')
-        f.write(','.join(self.headers) + '\n')
+        f.write('\t'.join(self.headers) + '\n')
         # f.write('\n'.join(self.fields))
         for i in range(len(self.fields)):
-            f.write(f"{','.join(self.fields[i].split(',')[:-4])},{self.___time[i]},{self.___status[i]},0,0\n")
+            f.write(f"{'\t'.join(self.fields[i].split('\t')[:-4])}\t{self.___time[i]}\t{self.___status[i]}\t0\t0\n")
         f.close()
 
 
@@ -92,7 +99,7 @@ class Deck:
         self.selected_question = self.__qa[0]
         self.selected_answer = self.__qa[1]
 
-        self.headers = self.__csv_file.split('\n')[1].split(',')
+        self.headers = self.__csv_file.split('\n')[1].split('\t')
         self.fields = self.__csv_file.split('\n')[2:-1] if self.__csv_file.split('\n')[-1] == '' else self.__csv_file.split('\n')[2:]
         if not self.check_fields():
             self.add_deck_fields()
@@ -250,14 +257,14 @@ class Deck:
         index = self.headers.index(field_name)
         ret = []
         for c in self.fields:
-            ret.append(c.split(',')[index])
+            ret.append(c.split('\t')[index])
         return ret
 
     def add_deck_fields(self):
         # self.headers += ',___time,___status,___srs_time,___card_time'
         self.headers += ['___time', '___status', '___srs_time', '___card_time']
         for c in range(len(self.fields)):
-            self.fields[c] += ',,,,'
+            self.fields[c] += '\t\t\t\t'
 
     def check_fields(self):
         return '___time' in self.headers and '___status' in self.headers and '___srs_time' in self.headers and '___card_time' in self.headers
@@ -271,7 +278,7 @@ class Deck:
         for key, index in zip(self.headers[:-4], range(len(self.headers[:-4]))):
             column = []
             for item in self.fields:
-                column.append(item.split(',')[index])
+                column.append(item.split('\t')[index])
             ret.update({key: column})
             column = []
         return ret
@@ -284,7 +291,7 @@ class Deck:
     def save(self):
         f = open(self.deck_path, 'w', encoding='utf-8')
         f.write(f'{self.selected_question};{self.selected_answer}\n')
-        f.write(','.join(self.headers) + '\n')
+        f.write('\t'.join(self.headers) + '\n')
         for i in range(len(self.fields)):
-            f.write(f"{','.join(self.fields[i].split(',')[:-4])},{self.___time[i]},{self.___status[i]},{self.___srs_time[i]},{self.___card_time[i]}\n")
+            f.write(f"{'\t'.join(self.fields[i].split('\t')[:-4])}\t{self.___time[i]}\t{self.___status[i]}\t{self.___srs_time[i]}\t{self.___card_time[i]}\n")
         f.close()

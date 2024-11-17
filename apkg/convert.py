@@ -44,10 +44,10 @@ def save_to_csv(f):
     try:
         with open(f, 'w', encoding='utf-8') as f:
             tempfile = connect('tempfile')
-            f.write(','.join(header(tempfile)))
+            f.write('\t'.join(header(tempfile)))
             f.write('\n')
             for i in values(tempfile):
-                f.write(','.join(i))
+                f.write('\t'.join(i))
                 f.write('\n')
             tempfile.close()
 

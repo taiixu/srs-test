@@ -4,6 +4,7 @@ from .db import DataBase
 import os
 from apkg.convert import convert as apkg_convert
 from .deck import SimpleDeck, Deck
+import traceback
 
 class UserBase:
     def __init__(self, base: DataBase, langs: list, bot, decks_path, temp_path) -> None:
@@ -207,8 +208,13 @@ class User:
                 self.send_w_keyboard("uploadError")
                 return
             
+            try:
+                self.add_deck_edit = SimpleDeck(f"{self.decks_path}/{self.user_id};{'.'.join(filename.split('.')[:-1])}.csv")
+            except:
+                print(traceback.format_exc())
+                self.send_w_keyboard("uploadError")
+                return
             self.stage = "deck_add:fields_edit:q"
-            self.add_deck_edit = SimpleDeck(f"{self.decks_path}/{self.user_id};{'.'.join(filename.split('.')[:-1])}.csv")
             self.fields = self.add_deck_edit.get_fields()
             self.fields_list = list(self.fields.keys())
 
