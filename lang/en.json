@@ -29,5 +29,6 @@
     "removeDeckSure": "Are you sure you want to remove the deck?",
     "buttonYes": "✅ Yes",
     "buttonNo": "🟥 No",
-    "removeSuccess": "The deck has been successfully removed"
+    "removeSuccess": "The deck has been successfully removed",
+    "interrupt": "There was an unexpected error"
 }

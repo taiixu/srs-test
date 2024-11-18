@@ -149,7 +149,7 @@ class Deck:
         while True:
             answer = random.choice(self.answers)
             if answer != correct_answer and answer not in ret:
-                ret.append(answer)
+                ret.append(self.html_to_text(answer))
             if len(ret) == count:
                 break
         return ret
@@ -164,7 +164,7 @@ class Deck:
         return ret
 
     def answer(self, ans):
-        if self.answers[self.current_card] == ans:
+        if self.html_to_text(self.answers[self.current_card]) == ans:
             if self.___status[self.current_card] == '1':
                 self.___status[self.current_card] = '2'
                 self.queue = self.move_to_center()
@@ -186,8 +186,8 @@ class Deck:
             return None
         # self.update()
         self.current_card = self.queue[0]
-        question = self.questions[self.current_card]
-        answer = self.answers[self.current_card]
+        question = self.html_to_text(self.questions[self.current_card])
+        answer = self.html_to_text(self.answers[self.current_card])
         rand_answers = self.get_random_answers(3, answer)
         if rand_answers == None:
             raise Exception("get_random_answers count >= len(answers)")
@@ -283,7 +283,23 @@ class Deck:
             column = []
         return ret
 
+    def html_to_text(self, text):
+        __text = text.replace('<br>', ' ').replace('&nbsp;', ' ')
+        ret = ''
+        ignoreChar = False
+        for c in __text:
+            if c == '<' and ignoreChar == False:
+                ignoreChar = True
+                continue
+            elif c == '>' and ignoreChar == True:
+                ignoreChar = False
+                continue
+            elif ignoreChar == False:
+                ret += c
+        return ret
+
     def update_deck(self):
+        self.day_now = self.get_current_day()
         self.new, self.study_now, self.repeat = self.get_studying_cards()
         self.queue = self.list_sum(self.new, self.study_now, self.repeat)
         self.count = self.get_studying_count()

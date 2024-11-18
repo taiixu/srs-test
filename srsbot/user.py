@@ -156,7 +156,13 @@ class User:
             prefix = f"{self.lang.print("incorrectAnswer")}{self.current_question[1]}"
         elif status == True:
             prefix = f"{self.lang.print("correctAnswer")}"
-        self.current_question = self.studying_deck.study()
+        try:
+            self.current_question = self.studying_deck.study()
+        except:
+            print(traceback.format_exc())
+            self.stage = "main"
+            self.send("interrupt", self.__keyboard_main_menu())
+            return
         if self.current_question == None:
             self.stage = "main"
             self.send("endStudy", self.__keyboard_main_menu())
@@ -205,6 +211,7 @@ class User:
                 apkg_convert(f"{self.temp_path}/{self.user_id};{filename}", f"{self.decks_path}/{self.user_id};{'.'.join(filename.split('.')[:-1])}.csv")
                 os.remove(f"{self.temp_path}/{self.user_id};{filename}")
             except:
+                print(traceback.format_exc())
                 self.send_w_keyboard("uploadError")
                 return
             
