@@ -299,10 +299,11 @@ class Deck:
         return ret
 
     def update_deck(self):
-        self.day_now = self.get_current_day()
-        self.new, self.study_now, self.repeat = self.get_studying_cards()
-        self.queue = self.list_sum(self.new, self.study_now, self.repeat)
-        self.count = self.get_studying_count()
+        self.__init__(self.deck_path)
+        # self.day_now = self.get_current_day()
+        # self.new, self.study_now, self.repeat = self.get_studying_cards()
+        # self.queue = self.list_sum(self.new, self.study_now, self.repeat)
+        # self.count = self.get_studying_count()
 
     def save(self):
         f = open(self.deck_path, 'w', encoding='utf-8')
